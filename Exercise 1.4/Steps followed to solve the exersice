@@ -1,0 +1,6 @@
+Steps followed to solve the exersice
+- docker run -it ubuntu (To run ubuntu and be able to interact with it)
+- apt update && apt upgrade (To update packages)
+- apt install curl  (Installing curl)
+- curl --version (Verifying that cURL has been installed correctly)
+- sh -c 'while true; do echo "Input website:"; read website; echo "Searching.."; sleep 1; curl http://$website; done'.   (Exercise command)

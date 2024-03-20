@@ -1,0 +1,4 @@
+Using the same Dockerfile used in Exercie 1.8:
+- % docker build . -t web-server
+- docker run -p 3001:8080 web-server
+- Enter to 127.0.0.1:3001 on my browser

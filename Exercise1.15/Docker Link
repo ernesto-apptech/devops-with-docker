@@ -1,5 +1,5 @@
 Docker Link
-- https://hub.docker.com/repository/docker/ernestoapptech/vue-vite-app/general
+- https://hub.docker.com/repository/docker/ernestoapptech/project-p1/general
 
 Docker pull command
-- docker pull ernestoapptech/vue-vite-app:latest
+- docker pull ernestoapptech/project-p1

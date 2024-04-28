@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  whoami:
+    image: devopsdockeruh/simple-web-service:alpine
+    ports:
+      - 3001:8080
+    command: server
+    container_name: simple-web

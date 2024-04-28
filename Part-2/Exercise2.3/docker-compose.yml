@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+  backend-p2:
+    platform: linux/amd64
+    working_dir: /app
+    environment:
+      REQUEST_ORIGIN: http://localhost:5001
+    build:
+      context: ./example-backend
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8080
+    container_name: backend-p2
+  frontend-p2:
+    environment:
+      NODE_ENV: development
+      REACT_APP_BACKEND_URL: http://localhost:8000/
+    working_dir: /usr/src/app
+    build:
+      context: ./example-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 5001:5000
+    depends_on:
+      - backend-p2
+    container_name: frontend-p2

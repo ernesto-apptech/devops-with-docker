@@ -1,0 +1,1 @@
+I had to change the REQUEST_ORIGIN environment variable in the backend project because it was expecting frontend calls from http://localhost:5001 instead of just http://localhost.

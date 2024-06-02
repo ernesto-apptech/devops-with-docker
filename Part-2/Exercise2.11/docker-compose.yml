@@ -1,0 +1,39 @@
+version: '3.1'  # Specify the Docker Compose file version
+
+services:
+  backend:
+    build:        # Instructions for building the backend image
+      context: ./zentre-backend  # Path to the backend project directory
+      dockerfile: Dockerfile      # Name of the Dockerfile in the project directory
+    ports:          # Map container ports to host machine ports
+      - 127.0.0.1:3000:3000    # Expose container port 3000 on the host at 127.0.0.1:3000
+    restart: unless-stopped   # Restart policy: Restart the container only if it exits unexpectedly
+    volumes:        # Mount volumes for data persistence and code access
+      - backend:/usr/src/app    # Mount the "backend" volume to the "/usr/src/app" directory in the container
+    networks:      # Connect the service to the "backend_network"
+      - backend_network
+    container_name: backend   # Set a custom container name for clarity
+
+  web:            # Define the "web" service configuration
+    build:        # Instructions for building the web image
+      context: ./maggie        # Path to the web project directory (Astro project)
+      dockerfile: Dockerfile      # Name of the Dockerfile in the project directory
+    ports:          # Map container ports to host machine ports
+      - 127.0.0.1:4321:4321    # Expose container port 4321 on the host at 127.0.0.1:4321
+    volumes:        # Mount volumes for data persistence and code access
+      - frontend:/user/src     # Mount the "frontend" volume to the "/user/src" directory in the container
+    networks:      # Connect the service to the "backend_network"
+      - backend_network
+    depends_on:    # Specify dependencies between services
+      backend:                 # The "web" service depends on the "backend" service
+        condition: service_completed_successfully  # Wait for the "backend" service to run to successful completion before starting 'web' service
+    restart: on-failure:5     # Restart policy: Restart the container up to 5 times on failures
+    container_name: web       # Set a custom container name for clarity
+
+volumes:
+  backend:        # Define a named volume for the backend service (optional)
+  frontend:       # Define a named volume for the web service (optional)
+
+networks:
+  backend_network:  # Define a custom network for the services
+    driver: bridge  # Use the default bridge network driver

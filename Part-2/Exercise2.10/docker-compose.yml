@@ -1,0 +1,79 @@
+
+version: '3.1'
+
+services:
+  db:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    container_name: db
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    networks:
+      - backend
+  backend-p2:
+    platform: linux/amd64
+    working_dir: /app
+    environment:
+      REQUEST_ORIGIN: http://localhost
+      REDIS_HOST: redis
+      POSTGRES_HOST: db
+      POSTGRES_DATABASE: postgres
+    build:
+      context: ./example-backend
+      dockerfile: Dockerfile
+    ports:
+      - 127.0.0.1:8000:8080
+    depends_on:
+      - db
+    container_name: backend-p2
+    networks:
+      - backend
+      - frontend
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    build: .
+    volumes:
+      - redis:/data
+    container_name: redis
+    networks:
+      - backend
+      - frontend
+  frontend-p2:
+    environment:
+      NODE_ENV: development
+      REACT_APP_BACKEND_URL: http://localhost:8000/
+      VIRTUAL_HOST: http://localhost/
+    working_dir: /usr/src/app
+    build:
+      context: ./example-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 127.0.0.1:5001:5000
+    depends_on:
+      - backend-p2
+    volumes:
+      - ./example-frontend/public/index.html:/usr/share/nginx/html/index.html:ro
+    container_name: frontend-p2
+    networks:
+      - backend
+      - frontend
+  proxy:
+    image: ninanung/nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 127.0.0.1:80:80
+    networks:
+      - frontend
+volumes:
+  database:
+  redis:
+
+networks:
+  frontend:
+  backend:
